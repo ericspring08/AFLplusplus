@@ -814,34 +814,46 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
     if (q->exec_us * 0.1 > avg_exec_us) {
 
       perf_score = 10;
+      q->exec_branch = 1;
 
     } else if (q->exec_us * 0.25 > avg_exec_us) {
 
       perf_score = 25;
+      q->exec_branch = 2;
 
     } else if (q->exec_us * 0.5 > avg_exec_us) {
 
       perf_score = 50;
+      q->exec_branch = 3;
 
     } else if (q->exec_us * 0.75 > avg_exec_us) {
 
       perf_score = 75;
+      q->exec_branch = 4;
 
     } else if (q->exec_us * 4 < avg_exec_us) {
 
       perf_score = 300;
+      q->exec_branch = 5;
 
     } else if (q->exec_us * 3 < avg_exec_us) {
 
       perf_score = 200;
+      q->exec_branch = 6;
 
     } else if (q->exec_us * 2 < avg_exec_us) {
 
       perf_score = 150;
+      q->exec_branch = 7;
+
+    } else{
+
+      q->exec_branch = 8;
 
     }
 
-  }
+  } else
+    q->exec_branch = 0;
 
   /* Adjust score based on bitmap size. The working theory is that better
      coverage translates to better targets. Multiplier from 0.25x to 3x. */
@@ -849,26 +861,36 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
   if (q->bitmap_size * 0.3 > avg_bitmap_size) {
 
     perf_score *= 3;
+    q->bitmap_branch = 1;
 
   } else if (q->bitmap_size * 0.5 > avg_bitmap_size) {
 
     perf_score *= 2;
+    q->bitmap_branch = 2;
 
   } else if (q->bitmap_size * 0.75 > avg_bitmap_size) {
 
     perf_score *= 1.5;
+    q->bitmap_branch = 3;
 
   } else if (q->bitmap_size * 3 < avg_bitmap_size) {
 
     perf_score *= 0.25;
+    q->bitmap_branch = 7;
 
   } else if (q->bitmap_size * 2 < avg_bitmap_size) {
 
     perf_score *= 0.5;
+    q->bitmap_branch = 6;
 
   } else if (q->bitmap_size * 1.5 < avg_bitmap_size) {
 
     perf_score *= 0.75;
+    q->bitmap_branch = 5;
+
+  } else {
+
+    q->bitmap_branch = 4;
 
   }
 
@@ -880,13 +902,16 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
 
     perf_score *= 4;
     q->handicap -= 4;
+    q->handicap_branch = 1;
 
   } else if (q->handicap) {
 
-    perf_score *= 2;
+    perf_score *= 1;
     --q->handicap;
+    q->handicap_branch = 2;
 
-  }
+  } else
+    q->handicap_branch = 3;
 
   /* Final adjustment based on input depth, under the assumption that fuzzing
      deeper test cases is more likely to reveal stuff that can't be
@@ -895,18 +920,23 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
   switch (q->depth) {
 
     case 0 ... 3:
+      q->depth_branch = 1;
       break;
     case 4 ... 7:
       perf_score *= 2;
+      q->depth_branch = 2;
       break;
     case 8 ... 13:
       perf_score *= 3;
+      q->depth_branch = 3;
       break;
     case 14 ... 25:
       perf_score *= 4;
+      q->depth_branch = 4;
       break;
     default:
       perf_score *= 5;
+      q->depth_branch = 5;
 
   }
 
@@ -1044,6 +1074,7 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
 
     if (factor > MAX_FACTOR) { factor = MAX_FACTOR; }
     perf_score *= factor / POWER_BETA;
+    q->pw_factor = factor / POWER_BETA;
 
   }
 

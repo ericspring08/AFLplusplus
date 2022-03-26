@@ -499,6 +499,11 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
     close(fd);
     add_to_queue(afl, queue_fn, len, 0);
 
+    ACTF(
+        "Adding test case to queue, id=%06u...",
+        afl->queued_items-1);
+    fflush(stdout);
+
 #ifdef INTROSPECTION
     if (afl->custom_mutators_count && afl->current_custom_fuzz) {
 
@@ -707,7 +712,13 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
 
 #endif                                                    /* ^!SIMPLE_FILES */
 
+      ACTF(
+          "Adding test case to crash, id=%06llu...",
+          afl->saved_crashes);
+      fflush(stdout);
+
       ++afl->saved_crashes;
+
 #ifdef INTROSPECTION
       if (afl->custom_mutators_count && afl->current_custom_fuzz) {
 

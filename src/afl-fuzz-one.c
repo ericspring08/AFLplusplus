@@ -446,8 +446,13 @@ u8 fuzz_one_original(afl_state_t *afl) {
 
     ACTF(
         "Fuzzing test case #%u (%u total, %llu crashes saved, "
+        "exec_branch=%u, bitmap_branch=%u, handicap_branch=%u, depth_branch=%u, pw_factor=%0.0f, "
+        "time=%llu, "
         "perf_score=%0.0f, exec_us=%llu, hits=%u, map=%u, ascii=%u)...",
         afl->current_entry, afl->queued_items, afl->saved_crashes,
+        afl->queue_cur->exec_branch, afl->queue_cur->bitmap_branch, 
+        afl->queue_cur->handicap_branch, afl->queue_cur-> depth_branch, 
+        afl->queue_cur->pw_factor, get_cur_time() + afl->prev_run_time - afl->start_time,
         afl->queue_cur->perf_score, afl->queue_cur->exec_us,
         likely(afl->n_fuzz) ? afl->n_fuzz[afl->queue_cur->n_fuzz_entry] : 0,
         afl->queue_cur->bitmap_size, afl->queue_cur->is_ascii);
@@ -3048,8 +3053,13 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
 
   if (afl->not_on_tty) {
 
-    ACTF("Fuzzing test case #%u (%u total, %llu crashes saved)...",
-         afl->current_entry, afl->queued_items, afl->saved_crashes);
+    ACTF(
+        "Fuzzing test case #%u (%u total, %llu crashes saved, "
+        "perf_score=%0.0f, exec_us=%llu, hits=%u, map=%u, ascii=%u)...",
+        afl->current_entry, afl->queued_items, afl->saved_crashes,
+        afl->queue_cur->perf_score, afl->queue_cur->exec_us,
+        likely(afl->n_fuzz) ? afl->n_fuzz[afl->queue_cur->n_fuzz_entry] : 0,
+        afl->queue_cur->bitmap_size, afl->queue_cur->is_ascii);
     fflush(stdout);
 
   }

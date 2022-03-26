@@ -193,6 +193,9 @@ struct queue_entry {
 
   struct queue_entry *mother;           /* queue entry this based on        */
 
+  short exec_branch, bitmap_branch, handicap_branch, depth_branch;
+  double pw_factor;
+
 };
 
 struct extra_data {
