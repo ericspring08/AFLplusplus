@@ -906,7 +906,7 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
 
   } else if (q->handicap) {
 
-    perf_score *= 1;
+    perf_score *= 2;
     --q->handicap;
     q->handicap_branch = 2;
 
