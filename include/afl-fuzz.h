@@ -196,6 +196,7 @@ struct queue_entry {
   short exec_branch, bitmap_branch, handicap_branch, depth_branch;
   double pw_factor;
 
+  char abandon_reason;                    /* reason for abandoning entry  */
 };
 
 struct extra_data {
