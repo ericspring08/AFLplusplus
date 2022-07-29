@@ -65,6 +65,13 @@ static void fsrv_exec_child(afl_forkserver_t *fsrv, char **argv) {
 
   }
 
+  // Log memory usage
+  struct rusage r_usage;
+  ACTF("Memory Usage(used: %u, time: %u)",
+    r_usage.ru_maxrss,
+    get_cur_time_us());
+  fflush(stdout);
+
   execv(fsrv->target_path, argv);
 
   WARNF("Execv failed in forkserver.");
