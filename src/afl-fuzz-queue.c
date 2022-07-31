@@ -1098,6 +1098,21 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
 
   }
 
+  // Instrument the calculation of perf_score
+  ACTF("perf_score update(perf_score=%u,id=%u,time=%llu,exec_us=%llu,exec_branch=%u,bitmap_size=%u,bitmap_branch=%u,handicap=%u,handicap_branch=%u,depth=%u,depth_branch=%u,pw_factor=%0.0f", 
+  perf_score, 
+  q->id, 
+  get_cur_time_us(),
+  q->exec_us,
+  q->exec_branch,
+  q->bitmap_size,
+  q->bitmap_branch,
+  q->handicap,
+  q->handicap_branch,
+  q->depth,
+  q->depth_branch,
+  q->pw_factor);
+
   return perf_score;
 
 }
