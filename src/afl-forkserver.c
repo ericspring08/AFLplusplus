@@ -67,7 +67,7 @@ static void fsrv_exec_child(afl_forkserver_t *fsrv, char **argv) {
 
   // Log memory usage
   struct rusage r_usage;
-  ACTF("Memory Usage(used: %u, time: %u)",
+  ACTF("Memory Usage(used=%llu,time=%0.0f)",
     r_usage.ru_maxrss,
     get_cur_time_us());
   fflush(stdout);
