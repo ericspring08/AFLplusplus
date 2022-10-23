@@ -1102,7 +1102,7 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
   ACTF("perf_score update(perf_score=%u,id=%u,time=%llu,exec_us=%llu,exec_branch=%u,bitmap_size=%u,bitmap_branch=%u,handicap=%u,handicap_branch=%u,depth=%u,depth_branch=%u,pw_factor=%0.0f", 
   perf_score, 
   q->id, 
-  get_cur_time_us(),
+  get_cur_time() + afl->prev_run_time - afl->start_time,
   q->exec_us,
   q->exec_branch,
   q->bitmap_size,
